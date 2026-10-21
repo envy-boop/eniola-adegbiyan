@@ -65,6 +65,7 @@ const SITE = {
      featured: true  shows it on the home page (keep it to 4).
      illustration: true  adds a small "Illustration" label, for projects where
        the real screens are confidential and the picture is a drawing.
+     proofOnRequest: true  adds a "Request proof" button that opens an email to you.
      NEVER paste Apps Script /exec links here: they are live endpoints. */
   projects: [
     {
@@ -122,7 +123,8 @@ const SITE = {
         "Around 100 prospective partners in the pipeline, and 10+ partnerships secured in a single quarter.",
       gallery: [],
       links: [],
-      note: "Company-owned, so the real dashboard isn't public. The picture is an illustration with placeholder data."
+      proofOnRequest: true,
+      note: "Company-owned, so the real dashboard isn't public. The picture is an illustration with placeholder data. Screenshots and a live walkthrough are available on request."
     },
     {
       id: "client-work-planner",
@@ -195,7 +197,7 @@ const SITE = {
       illustration: true,
       cover: "images/hilvarr-automation.svg",
       summary:
-        "Automations that move new leads from Google Sheets into Notion and remind clients when their reports are due, with no copy-pasting.",
+        "Make.com and Apps Script automations that move new leads into Notion and remind clients when reports are due, plus a full reorganisation of the agency's Notion boards.",
       role: "Built the automations as Operations Intern",
       tools: ["Make.com", "Google Apps Script", "Twilio", "Notion", "Google Sheets"],
       challenge:
@@ -208,7 +210,8 @@ const SITE = {
       result: "New leads land in Notion on their own, and clients are reminded automatically, saving hours of repetitive work.",
       gallery: [],
       links: [],
-      note: "Client work, so the real screens aren't public. The picture is an illustration; proof is available on request."
+      proofOnRequest: true,
+      note: "Client work, so the real screens aren't public. The picture is an illustration. Screenshots are available on request."
     },
     {
       id: "infopouch-waitlist",
@@ -287,23 +290,34 @@ const SITE = {
       title: "Staff Leave Management System",
       org: "Stableflow",
       year: "2026",
-      status: "In progress",
+      status: "In progress", // change to "Live" once staff are using it
       category: "Operations systems",
-      illustration: true,
-      cover: "images/leave-system.svg",
-      summary: "A leave request and approval system for staff, built on Google Sheets with simple email-code logins.",
-      role: "Building it on my own, as Operations Manager (volunteer)",
-      tools: ["Google Apps Script", "Google Sheets", "Web hosting"],
-      challenge: "Staff needed an easy way to request leave, and the team needed one place to approve it. Staff also had trouble logging in with their Google accounts.",
+      featured: false,
+      cover: "images/leave-system.jpg",
+      coverPosition: "50% 0%",
+      summary:
+        "A team project: a colleague wrote Stableflow's leave policy, and my supervisor assigned me to turn it into a working system, with live balances, a smart request form, a team calendar and approvals.",
+      role: "Built the system, assigned by my supervisor, as volunteer Operations Manager",
+      tools: ["Google Apps Script", "Google Sheets", "HTML, CSS & JavaScript", "Web hosting"],
+      challenge:
+        "Stableflow had a written leave policy, prepared by a colleague, but no system to run it. Staff needed an easy way to request leave and see what they had left, and the team needed one place to approve requests and see who is away. My supervisor assigned the build to me.",
       did: [
-        "Built the system on Google Apps Script and Google Sheets.",
-        "Designed a simple login: staff get a code by email, and only approved staff emails can get in.",
-        "Moving the pages to separate web hosting so every staff member can log in without trouble."
+        "Turned the team's leave policy document into working rules: leave types, allowances and approvals.",
+        "Built live balance cards for every leave type: annual, sick, maternity, paternity, compassionate and unpaid, showing what's left, pending and used.",
+        "Built a request form that counts working days automatically, supports half days, and asks for a cover person, who is asked to confirm, plus contact details and handover notes.",
+        "Added a team calendar that shows who is away, public holidays and your own pending leave, plus an 'Away in the next 7 days' list.",
+        "Added 'My requests' with clear statuses, so staff can withdraw a pending request or cancel approved leave.",
+        "Added a friendly assistant that explains each step in plain words, for example how many days a request uses and how many will be left.",
+        "Designed a simple login: staff get a code by email, and only approved staff emails can get in. Light and dark mode, and it works on phones.",
+        "Worked through a lot of bugs along the way, testing and fixing until the system matched the policy."
       ],
-      result: "In progress.",
-      gallery: [],
+      result:
+        "In progress. Once live, staff can see their balances and request leave in minutes, and the team sees who is away at a glance instead of chasing messages.",
+      gallery: [
+        { src: "images/leave-system-mobile.jpg", caption: "On a phone, in light mode (test data)" }
+      ],
       links: [],
-      note: "Company-owned, so the real screens aren't public. The picture is an illustration with placeholder data."
+      note: "A team effort: the leave policy was written by a colleague, and the work was assigned by my supervisor. The system belongs to Stableflow. Screens show test data only."
     },
     {
       id: "grocery-demo",
@@ -421,7 +435,8 @@ const SITE = {
       points: [
         "Built the onboarding access system and wrote the Q3 operations report.",
         "Own the HR and operations SOP for the internship programme.",
-        "Building a staff leave system and a task-intake automation with Google Forms, Sheets and Apps Script."
+        "Building the staff leave system from the team's leave policy, as assigned by my supervisor.",
+        "Building a task-intake automation with Google Forms, Sheets and Apps Script."
       ]
     },
     {

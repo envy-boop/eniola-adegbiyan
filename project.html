@@ -10,23 +10,43 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Eniola Adegbiyan | Operations · Project Management · Executive Support" />
   <meta property="og:description" content="I keep startups and growing teams organised and moving: operations, projects, partnerships and the tools behind the work." />
-  <meta property="og:image" content="https://envy-boop.github.io/images/photo.jpg" />
-  <meta property="og:url" content="https://envy-boop.github.io/project.html" />
+  <meta property="og:image" content="https://envy-boop.github.io/eniola-adegbiyan/images/photo.jpg" />
+  <meta property="og:url" content="https://envy-boop.github.io/eniola-adegbiyan/project.html" />
   <meta name="twitter:card" content="summary_large_image" />
   <!-- Tab icon: a gold "E" -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0d'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='40' fill='%23e8b86a'%3EE%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <!-- ?v=10 makes browsers fetch fresh files. When you upload a changed file, raise the number (v=11, v=12...) in all 4 pages. -->
+  <link rel="stylesheet" href="style.css?v=10" />
   <script>document.documentElement.classList.add("js");</script>
 </head>
 <body data-page="project">
   <!-- The page is built by main.js from content.js. To change words, edit content.js. -->
   <main></main>
   <noscript><p style="padding:40px;color:#fff">Please turn on JavaScript to see this site.</p></noscript>
-  <script src="content.js"></script>
-  <script src="glow.js"></script>
-  <script src="main.js"></script>
+  <!-- If something fails to load, show a clear message instead of a blank page -->
+  <script>
+    (function () {
+      function warn(msg) {
+        var box = document.createElement("div");
+        box.style.cssText = "position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;padding:16px 18px;border-radius:14px;background:#3a1212;color:#ffd7d7;font:15px/1.5 system-ui,sans-serif;border:1px solid #a33";
+        box.textContent = "Site problem: " + msg;
+        document.body.appendChild(box);
+      }
+      window.addEventListener("error", function (e) {
+        if (e.target && e.target.tagName === "SCRIPT") warn("could not load " + e.target.getAttribute("src").split("?")[0] + ". Make sure it is in the same folder as this page.");
+        else if (e.message) warn(e.message + (e.filename ? " (in " + e.filename.split("/").pop().split("?")[0] + ")" : ""));
+      }, true);
+      window.addEventListener("load", function () {
+        if (typeof SITE === "undefined") warn("content.js did not load. Unzip the whole folder first, then open index.html from inside it.");
+        else if (!document.querySelector(".site-header")) warn("main.js did not run. Make sure the newest main.js is in the same folder as this page.");
+      });
+    })();
+  </script>
+  <script src="content.js?v=10"></script>
+  <script src="glow.js?v=10"></script>
+  <script src="main.js?v=10"></script>
 </body>
 </html>

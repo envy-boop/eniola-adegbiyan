@@ -12,7 +12,13 @@ function esc(text) {
   return d.innerHTML;
 }
 const slug = (s) => String(s).toLowerCase().replace(/\s+/g, "-");
-const projectUrl = (p) => `project.html?p=${encodeURIComponent(p.id)}`;
+// Project links look like project.html#vera-id. The part after # is never stripped,
+// so it works on GitHub, on your laptop, and when you double-click the file.
+const projectUrl = (p) => `project.html#${encodeURIComponent(p.id)}`;
+function currentProjectId() {
+  const fromQuery = new URLSearchParams(location.search).get("p"); // old-style links still work
+  return fromQuery || decodeURIComponent(location.hash.replace(/^#/, ""));
+}
 const whatsappUrl = () => `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`;
 
 /* ---------- Pieces used on several pages ---------- */
@@ -40,6 +46,7 @@ function header() {
 function contactBlock() {
   const wa = SITE.whatsapp ? `<a class="btn whatsapp" href="${whatsappUrl()}" target="_blank" rel="noopener">Chat on WhatsApp</a>` : "";
   const li = SITE.socials.find((s) => s.label === "LinkedIn");
+  const gh = SITE.socials.find((s) => s.label === "GitHub");
   return `
   <section class="section" id="contact">
     <div class="card contact-card reveal">
@@ -51,6 +58,7 @@ function contactBlock() {
         <a class="btn primary" href="mailto:${esc(SITE.email)}">Email me</a>
         ${wa}
         ${li ? `<a class="btn" href="${esc(li.url)}" target="_blank" rel="noopener">LinkedIn</a>` : ""}
+        ${gh ? `<a class="btn" href="${esc(gh.url)}" target="_blank" rel="noopener">GitHub</a>` : ""}
         ${SITE.cv ? `<a class="btn" href="${esc(SITE.cv)}" download>Download CV</a>` : ""}
       </div>
     </div>
@@ -67,19 +75,37 @@ function footer() {
 }
 
 function projectCard(p) {
+  // Buttons: the project's own links first (e.g. "Play the game" goes straight to Start.ng),
+  // then "Request proof" for confidential work, then the full story.
+  const links = (p.links || []).filter((l) => l.url);
+  const main = links[0];
+  const extra = links.slice(1);
+  const ext = (url) => (url.startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"');
+  const proof = p.proofOnRequest ? { label: "Request proof", url: `mailto:${SITE.email}?subject=${encodeURIComponent("Proof request: " + p.title)}` } : null;
+  const primary = main || proof;
+  const did = (p.did || []).slice(0, 2);
+  const imgHref = main ? main.url : projectUrl(p);
+
   return `
-  <a class="card pcard reveal" href="${projectUrl(p)}" data-cat="${esc(p.category)}">
-    <div class="thumb">
+  <article class="card pcard reveal" data-cat="${esc(p.category)}">
+    <a class="thumb" href="${esc(imgHref)}" ${main ? ext(main.url) : ""} aria-label="${esc(main ? main.label : "Read about " + p.title)}">
       <img src="${esc(p.cover)}" alt="${esc(p.title)}" loading="lazy" style="object-position:${esc(p.coverPosition || "50% 0%")}" />
       ${p.illustration ? `<span class="tag-illus">Illustration</span>` : ""}
-    </div>
+      ${main ? `<span class="tag-go">${esc(main.label)} ↗</span>` : ""}
+    </a>
     <div class="body">
       <div class="meta"><span>${esc(p.org)}</span><span class="badge ${slug(p.status)}">${esc(p.status)}</span></div>
       <h3>${esc(p.title)}</h3>
       <p>${esc(p.summary)}</p>
-      <span class="arrow-link">Read the case study <span>→</span></span>
+      ${did.length ? `<div class="did"><span>What I did</span><ul>${did.map((d) => `<li>${esc(d)}</li>`).join("")}</ul></div>` : ""}
+      <div class="card-actions">
+        ${primary ? `<a class="btn small primary" href="${esc(primary.url)}" ${ext(primary.url)}>${esc(primary.label)} ↗</a>` : ""}
+        ${extra.map((l) => `<a class="btn small" href="${esc(l.url)}" ${ext(l.url)}>${esc(l.label)}</a>`).join("")}
+        ${main && proof ? `<a class="btn small" href="${esc(proof.url)}">${esc(proof.label)}</a>` : ""}
+      </div>
+      <a class="arrow-link" href="${projectUrl(p)}">Full story <span>→</span></a>
     </div>
-  </a>`;
+  </article>`;
 }
 
 function sectionHead(eyebrow, title, lead, extra = "") {
@@ -157,15 +183,25 @@ function workPage() {
 }
 
 function projectPage() {
-  const id = new URLSearchParams(location.search).get("p");
+  const id = currentProjectId();
   const i = SITE.projects.findIndex((p) => p.id === id);
   if (i < 0) {
-    return `<section class="page-head"><h1>Project not found</h1><p class="section-lead"><a class="arrow-link" href="work.html">See all my work <span>→</span></a></p></section>`;
+    // No project picked (or an old link): show every project to choose from
+    return `
+    <section class="page-head">
+      <span class="eyebrow">Case studies</span>
+      <h1>Pick a <em>project.</em></h1>
+      <p class="section-lead">Each one shows the challenge, what I did and the result.</p>
+    </section>
+    <div class="projects-grid three">${SITE.projects.map(projectCard).join("")}</div>`;
   }
   const p = SITE.projects[i];
   const next = SITE.projects[(i + 1) % SITE.projects.length];
   document.title = `${p.title} | ${SITE.name}`;
   const links = (p.links || []).filter((l) => l.url);
+  if (p.proofOnRequest) {
+    links.push({ label: "Request proof", url: `mailto:${SITE.email}?subject=${encodeURIComponent("Proof request: " + p.title)}` });
+  }
 
   return `
   <section class="page-head" style="padding-bottom:0">
@@ -180,7 +216,7 @@ function projectPage() {
     <div class="card reveal"><h4>Tools</h4><ul class="chips">${p.tools.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>
     <div class="card reveal"><h4>${links.length ? "See it" : "Category"}</h4>
       ${links.length
-        ? `<div class="links-col">${links.map((l, k) => `<a class="btn small ${k === 0 ? "primary" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("")}</div>`
+        ? `<div class="links-col">${links.map((l, k) => `<a class="btn small ${k === 0 ? "primary" : ""}" href="${esc(l.url)}" ${l.url.startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>${esc(l.label)}</a>`).join("")}</div>`
         : `<p>${esc(p.category)}</p>`}
     </div>
   </div>
@@ -317,6 +353,10 @@ function setupReveal() {
     });
   }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
   items.forEach((i) => io.observe(i));
+  // Safety net: after 2.5 seconds, show anything that is still hidden
+  setTimeout(() => document.querySelectorAll(".reveal:not(.in)").forEach((i) => {
+    if (i.getBoundingClientRect().top < innerHeight) i.classList.add("in");
+  }), 2500);
 }
 
 // Cards: a soft gold spotlight follows the cursor across them
@@ -338,6 +378,13 @@ document.body.insertAdjacentHTML("afterbegin", header());
 $("main").innerHTML = (pages[PAGE] || homePage)() + contactBlock();
 $("main").insertAdjacentHTML("afterend", footer());
 if (PAGE !== "project") document.title = `${SITE.name} | ${SITE.roles.slice(0, 3).join(", ")}`;
+
+document.querySelectorAll("main img").forEach((img) => {
+  img.addEventListener("error", () => { (img.closest(".cover, figure") || img).style.display = "none"; });
+});
+
+if (PAGE === "project") window.addEventListener("hashchange", () => { location.reload(); });
+if (PAGE === "project") window.scrollTo(0, 0);
 
 rotateRoles();
 setupFilters();
