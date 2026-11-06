@@ -26,6 +26,9 @@ const SITE = {
     { label: "GitHub", url: "https://github.com/envy-boop" }
   ],
   photo: "images/photo.jpg",
+  // The home page photo slides between these. Add or remove pictures here.
+  heroPhotos: ["images/photo.jpg", "images/photo-2.jpg"],
+  heroPhotoSeconds: 8, // how many seconds each photo shows before switching
   cv: "cv.pdf",
 
   // The big numbers on the home page.

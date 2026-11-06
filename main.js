@@ -138,7 +138,7 @@ function homePage() {
       </div>
     </div>
     <div class="portrait-wrap">
-      <div class="portrait"><img src="${esc(SITE.photo)}" alt="Portrait of ${esc(SITE.name)}" /></div>
+      <div class="portrait">${(SITE.heroPhotos && SITE.heroPhotos.length ? SITE.heroPhotos : [SITE.photo]).map((src, i) => `<img class="${i === 0 ? "on" : ""}" src="${esc(src)}" alt="${i === 0 ? `Portrait of ${esc(SITE.name)}` : ""}" ${i ? `aria-hidden="true" loading="lazy"` : ""} />`).join("")}</div>
       <div class="card float-chip b"><span class="ico">✦</span><span><strong>${esc(current.role)}</strong><small>${esc(current.org)}</small></span></div>
       <div class="card float-chip a"><span class="ico">⌖</span><span><strong>Based in Nigeria</strong><small>Working remotely</small></span></div>
     </div>
@@ -449,6 +449,19 @@ function setupLightbox() {
   });
 }
 
+// Home: slide between hero photos
+function rotatePhotos() {
+  const imgs = document.querySelectorAll(".portrait img");
+  if (imgs.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let at = 0;
+  setInterval(() => {
+    if (document.hidden) return;
+    imgs[at].classList.remove("on");
+    at = (at + 1) % imgs.length;
+    imgs[at].classList.add("on");
+  }, (SITE.heroPhotoSeconds || 8) * 1000);
+}
+
 /* ---------- Build the page ---------- */
 
 const pages = { home: homePage, work: workPage, project: projectPage, about: aboutPage };
@@ -465,6 +478,7 @@ if (PAGE === "project") window.addEventListener("hashchange", () => { location.r
 if (PAGE === "project") window.scrollTo(0, 0);
 
 rotateRoles();
+rotatePhotos();
 setupFilters();
 setupReveal();
 setupSpotlight();

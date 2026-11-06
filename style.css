@@ -143,7 +143,9 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
   position: relative; aspect-ratio: 4 / 5; border-radius: 220px 220px 28px 28px; overflow: hidden;
   border: 1px solid var(--line-strong); background: var(--surface-solid);
 }
-.portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
+.portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; opacity: 0; transform: scale(1.03); transition: opacity 1.2s ease, transform 8s ease; }
+.portrait img.on { opacity: 1; transform: scale(1); }
+.portrait img:only-child { opacity: 1; transform: none; }
 .float-chip {
   position: absolute; display: flex; align-items: center; gap: 10px; padding: 12px 16px;
   font-size: 0.85rem; border-radius: 16px; white-space: nowrap; box-shadow: 0 20px 40px -20px #000;
