@@ -421,11 +421,13 @@ const SITE = {
     {
       org: "AKD (Apex Knowledge Desk)",
       role: "Project Management Associate",
-      period: "Aug 2026 to Present",
+      period: "Aug 2026 to Nov 2026",
       points: [
+        "Joined as a project management intern and was promoted to associate, supporting the Partnership and Ambassador teams.",
         "Led partnership outreach across 450+ organisations, building a pipeline of around 100 prospective partners and securing 10+ partnerships in one quarter.",
-        "Coordinate partnerships, internship pipelines, onboarding and reporting across teams.",
-        "Built the partnership tracker and its live Apps Script dashboard."
+        "Coordinated partnerships, internship pipelines, onboarding and reporting across teams.",
+        "Built the partnership tracker and its live Apps Script dashboard.",
+        "Named Project Management Intern of the Cohort and awarded a Certificate of Distinction (EPS score 99/100)."
       ]
     },
     {
@@ -468,11 +470,73 @@ const SITE = {
   earlier:
     "Earlier: Cowrywise Campus Ambassador, TRYBE City Virtual Assistant Intern, Hope4aFuture Social Media Assistant, freelance graphic design at The Incubator Hub. The full list is in my CV.",
 
+  /* CERTIFICATES & AWARDS (newest first)
+     Shown as a gallery on the About page. Each one needs:
+       image: the big picture   thumb: the small card picture   pdf: the download
+     Files live in the  certificates/  folder (img, thumb and pdf). */
   certifications: [
-    { name: "Virtual Assistant", from: "HNG Tech", year: "2026" },
-    { name: "Graphic Design", from: "Digital Skill Up Africa", year: "2025" },
-    { name: "Virtual Assistant Training", from: "Ladies in Tech Africa", year: "2024" },
-    { name: "Virtual Assistant Internship", from: "TRYBE City", year: "2024" }
+    {
+      name: "Project Management Intern of the Cohort",
+      from: "Apex Knowledge Desk · Cohort 26 Gamma",
+      date: "Nov 2026",
+      kind: "Award",
+      image: "certificates/img/akd-best-pm-intern-award.jpg",
+      thumb: "certificates/thumb/akd-best-pm-intern-award.jpg",
+      pdf: "certificates/pdf/akd-best-pm-intern-award.pdf"
+    },
+    {
+      name: "Certificate of Distinction: Project Management Associate (99/100)",
+      from: "Apex Knowledge Desk",
+      date: "Nov 2026",
+      kind: "Award",
+      image: "certificates/img/akd-certificate-of-distinction.jpg",
+      thumb: "certificates/thumb/akd-certificate-of-distinction.jpg",
+      pdf: "certificates/pdf/akd-certificate-of-distinction.pdf"
+    },
+    {
+      name: "HNG Internship 14: Virtual Assistance (Stage 5)",
+      from: "HNG Tech",
+      date: "May 2026",
+      kind: "Certificate",
+      image: "certificates/img/hng14-virtual-assistance.jpg",
+      thumb: "certificates/thumb/hng14-virtual-assistance.jpg",
+      pdf: "certificates/pdf/hng14-virtual-assistance.pdf"
+    },
+    {
+      name: "Graphic Design",
+      from: "Digital Skill Up Africa × The Incubator Hub",
+      date: "Nov 2025",
+      kind: "Certificate",
+      image: "certificates/img/dsa-graphics-design.jpg",
+      thumb: "certificates/thumb/dsa-graphics-design.jpg",
+      pdf: "certificates/pdf/dsa-graphics-design.pdf"
+    },
+    {
+      name: "Virtual Assistant Training",
+      from: "Ladies in Tech Africa",
+      date: "Dec 2024",
+      kind: "Certificate",
+      image: "certificates/img/ladies-in-tech-virtual-assistant.jpg",
+      thumb: "certificates/thumb/ladies-in-tech-virtual-assistant.jpg",
+      pdf: "certificates/pdf/ladies-in-tech-virtual-assistant.pdf"
+    },
+    {
+      name: "3-Month Bootcamp (Virtual Assistant Internship)",
+      from: "TRYBE City Technology",
+      date: "Aug–Nov 2024",
+      kind: "Certificate",
+      image: "certificates/img/trybe-city-bootcamp.jpg",
+      thumb: "certificates/thumb/trybe-city-bootcamp.jpg",
+      pdf: "certificates/pdf/trybe-city-bootcamp.pdf"
+    }
+  ],
+
+  /* LETTERS OF RECOMMENDATION
+     Only a small preview is shown (contact details blurred). The full
+     letter is shared on request, by email. */
+  letters: [
+    { name: "Letter of Recommendation", from: "Apex Knowledge Desk", date: "Nov 2026", thumb: "certificates/thumb/letter-akd.jpg" },
+    { name: "Internship Reference (Virtual Assistant)", from: "TRYBE City Technology", date: "Nov 2024", thumb: "certificates/thumb/letter-trybe-city.jpg" }
   ],
 
   education: {

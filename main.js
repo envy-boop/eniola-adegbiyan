@@ -279,10 +279,48 @@ function aboutPage() {
     <div class="skills-grid">${SITE.skills.map((g) => `<div class="card reveal"><h3>${esc(g.group)}</h3><ul class="chips">${g.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>`).join("")}</div>
   </section>
 
+  <section class="section" style="padding-top:0" id="certificates">
+    ${sectionHead("Certificates & awards", "Recognised for the <em>work.</em>", "Tap any certificate to see it full size, or download the PDF.")}
+    <div class="cert-gallery">
+      ${SITE.certifications.map((c, i) => `
+      <figure class="card cert-card reveal">
+        <button class="cert-thumb" type="button" data-cert="${i}" aria-label="View ${esc(c.name)} full size">
+          <img src="${esc(c.thumb)}" alt="${esc(c.name)} certificate" loading="lazy" />
+          ${c.kind === "Award" ? `<span class="cert-badge">Award</span>` : ""}
+        </button>
+        <figcaption>
+          <span class="yr">${esc(c.date)}</span>
+          <h3>${esc(c.name)}</h3>
+          <p>${esc(c.from)}</p>
+          <div class="cert-actions">
+            <button class="link-btn" type="button" data-cert="${i}">View</button>
+            ${c.pdf ? `<a class="link-btn" href="${esc(c.pdf)}" download>Download PDF</a>` : ""}
+          </div>
+        </figcaption>
+      </figure>`).join("")}
+    </div>
+  </section>
+
+  ${SITE.letters && SITE.letters.length ? `
   <section class="section" style="padding-top:0">
-    ${sectionHead("Certifications & education", "Always <em>learning.</em>", "")}
+    ${sectionHead("References", "What people I've <em>worked with</em> say.", "A preview of each letter is below. Full letters are available on request.")}
+    <div class="letters">
+      ${SITE.letters.map((l) => `
+      <div class="card letter-card reveal">
+        <div class="letter-thumb"><img src="${esc(l.thumb)}" alt="Preview of ${esc(l.name)} from ${esc(l.from)}" loading="lazy" /></div>
+        <div class="letter-body">
+          <span class="yr">${esc(l.date)}</span>
+          <h3>${esc(l.name)}</h3>
+          <p>${esc(l.from)}</p>
+          <a class="btn" href="mailto:${esc(SITE.email)}?subject=${encodeURIComponent("Request: " + l.name + " (" + l.from + ")")}">Request full letter</a>
+        </div>
+      </div>`).join("")}
+    </div>
+  </section>` : ""}
+
+  <section class="section" style="padding-top:0">
+    ${sectionHead("Education", "Where it <em>started.</em>", "")}
     <div class="certs">
-      ${SITE.certifications.map((c) => `<div class="card cert reveal"><span class="yr">${esc(c.year)}</span><h3>${esc(c.name)}</h3><p>${esc(c.from)}</p></div>`).join("")}
       <div class="card cert reveal"><span class="yr">Degree</span><h3>${esc(SITE.education.detail)}</h3><p>${esc(SITE.education.school)}</p></div>
     </div>
   </section>`;
@@ -371,6 +409,46 @@ function setupSpotlight() {
   }, { passive: true });
 }
 
+// About page: open a certificate full size
+function setupLightbox() {
+  if (!document.querySelector("[data-cert]")) return;
+  const box = document.createElement("div");
+  box.className = "lightbox"; box.hidden = true;
+  box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true");
+  box.innerHTML = `<div class="lb-inner">
+    <button class="lb-close" type="button" aria-label="Close">×</button>
+    <img alt="" />
+    <div class="lb-bar"><div><strong></strong><small></small></div>
+      <div class="lb-nav"><button type="button" class="link-btn lb-prev">← Prev</button><a class="btn primary lb-pdf" download>Download PDF</a><button type="button" class="link-btn lb-next">Next →</button></div></div>
+  </div>`;
+  document.body.appendChild(box);
+  const img = box.querySelector("img"), title = box.querySelector("strong"), sub = box.querySelector("small"), pdf = box.querySelector(".lb-pdf");
+  let at = 0, opener = null;
+  function show(i) {
+    at = (i + SITE.certifications.length) % SITE.certifications.length;
+    const c = SITE.certifications[at];
+    img.src = c.image || c.thumb; img.alt = c.name + " certificate";
+    title.textContent = c.name; sub.textContent = c.from + " · " + c.date;
+    if (c.pdf) { pdf.href = c.pdf; pdf.hidden = false; } else pdf.hidden = true;
+  }
+  function open(i, btn) { opener = btn; show(i); box.hidden = false; document.body.style.overflow = "hidden"; box.querySelector(".lb-close").focus(); }
+  function close() { box.hidden = true; document.body.style.overflow = ""; if (opener) opener.focus(); }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-cert]");
+    if (b) open(+b.dataset.cert, b);
+  });
+  box.addEventListener("click", (e) => { if (e.target === box) close(); });
+  box.querySelector(".lb-close").addEventListener("click", close);
+  box.querySelector(".lb-prev").addEventListener("click", () => show(at - 1));
+  box.querySelector(".lb-next").addEventListener("click", () => show(at + 1));
+  document.addEventListener("keydown", (e) => {
+    if (box.hidden) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowRight") show(at + 1);
+    if (e.key === "ArrowLeft") show(at - 1);
+  });
+}
+
 /* ---------- Build the page ---------- */
 
 const pages = { home: homePage, work: workPage, project: projectPage, about: aboutPage };
@@ -390,3 +468,4 @@ rotateRoles();
 setupFilters();
 setupReveal();
 setupSpotlight();
+setupLightbox();
