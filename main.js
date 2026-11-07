@@ -19,7 +19,21 @@ function currentProjectId() {
   const fromQuery = new URLSearchParams(location.search).get("p"); // old-style links still work
   return fromQuery || decodeURIComponent(location.hash.replace(/^#/, ""));
 }
-const whatsappUrl = () => `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`;
+const whatsappUrl = (text) => `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}` + (text ? `?text=${encodeURIComponent(text)}` : "");
+
+// Ready-made messages for the "Hire me" button
+const HIRE_EMAIL = `mailto:${SITE.email}?subject=${encodeURIComponent("Hiring enquiry")}&body=${encodeURIComponent("Hi Eniola,\n\nI saw your portfolio and I'd like to talk about a role.\n\n")}`;
+const HIRE_WHATSAPP_TEXT = "Hi Eniola, I saw your portfolio and I'd like to talk about a role.";
+
+// Small line icons (24x24)
+const ICONS = {
+  email: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  whatsapp: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
+  github: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>',
+  cv: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'
+};
+const icon = (name) => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 
 /* ---------- Pieces used on several pages ---------- */
 
@@ -37,14 +51,20 @@ function header() {
       <a class="brand" href="index.html"><span class="brand-dot"></span><span>${esc(parts[0])}<span class="full"> ${esc(parts.slice(1).join(" "))}</span></span></a>
       <nav class="nav">
         ${links.map(([href, label, key]) => `<a href="${href}" class="${PAGE === key || (PAGE === "project" && key === "work") ? "active" : ""}">${label}</a>`).join("")}
-        <a class="btn primary small" href="#contact">Hire me</a>
+        <div class="hire">
+          <button class="btn primary small hire-btn" type="button" aria-haspopup="true" aria-expanded="false">Hire me</button>
+          <div class="hire-menu" hidden>
+            <a href="${HIRE_EMAIL}">${icon("email")}<span>Send an email</span></a>
+            ${SITE.whatsapp ? `<a class="wa" href="${whatsappUrl(HIRE_WHATSAPP_TEXT)}" target="_blank" rel="noopener">${icon("whatsapp")}<span>Chat on WhatsApp</span></a>` : ""}
+            ${(() => { const li = SITE.socials.find((s) => s.label === "LinkedIn"); return li ? `<a class="li" href="${esc(li.url)}" target="_blank" rel="noopener">${icon("linkedin")}<span>Message on LinkedIn</span></a>` : ""; })()}
+          </div>
+        </div>
       </nav>
     </div>
   </header>`;
 }
 
 function contactBlock() {
-  const wa = SITE.whatsapp ? `<a class="btn whatsapp" href="${whatsappUrl()}" target="_blank" rel="noopener">Chat on WhatsApp</a>` : "";
   const li = SITE.socials.find((s) => s.label === "LinkedIn");
   const gh = SITE.socials.find((s) => s.label === "GitHub");
   return `
@@ -54,12 +74,12 @@ function contactBlock() {
       <h2 style="margin-top:18px">Need someone to keep <em>things running?</em></h2>
       <p>I'm open to remote operations, project management and executive assistant roles. Send me a message and I'll get back to you quickly.</p>
       <a class="contact-email" href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
-      <div class="cta-row">
-        <a class="btn primary" href="mailto:${esc(SITE.email)}">Email me</a>
-        ${wa}
-        ${li ? `<a class="btn" href="${esc(li.url)}" target="_blank" rel="noopener">LinkedIn</a>` : ""}
-        ${gh ? `<a class="btn" href="${esc(gh.url)}" target="_blank" rel="noopener">GitHub</a>` : ""}
-        ${SITE.cv ? `<a class="btn" href="${esc(SITE.cv)}" download>Download CV</a>` : ""}
+      <div class="icon-row">
+        <a class="icon-btn primary" href="${HIRE_EMAIL}" aria-label="Email me" data-tip="Email">${icon("email")}</a>
+        ${SITE.whatsapp ? `<a class="icon-btn wa" href="${whatsappUrl(HIRE_WHATSAPP_TEXT)}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" data-tip="WhatsApp">${icon("whatsapp")}</a>` : ""}
+        ${li ? `<a class="icon-btn" href="${esc(li.url)}" target="_blank" rel="noopener" aria-label="LinkedIn" data-tip="LinkedIn">${icon("linkedin")}</a>` : ""}
+        ${gh ? `<a class="icon-btn" href="${esc(gh.url)}" target="_blank" rel="noopener" aria-label="GitHub" data-tip="GitHub">${icon("github")}</a>` : ""}
+        ${SITE.cv ? `<a class="icon-btn" href="${esc(SITE.cv)}" download aria-label="Download CV" data-tip="CV">${icon("cv")}</a>` : ""}
       </div>
     </div>
   </section>`;
@@ -462,6 +482,17 @@ function rotatePhotos() {
   }, (SITE.heroPhotoSeconds || 8) * 1000);
 }
 
+// Header: "Hire me" opens a small menu (email or WhatsApp)
+function setupHireMenu() {
+  const btn = document.querySelector(".hire-btn"), menu = document.querySelector(".hire-menu");
+  if (!btn || !menu) return;
+  const set = (open) => { menu.hidden = !open; btn.setAttribute("aria-expanded", String(open)); };
+  btn.addEventListener("click", (e) => { e.stopPropagation(); set(menu.hidden); });
+  document.addEventListener("click", (e) => { if (!e.target.closest(".hire")) set(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") set(false); });
+  menu.addEventListener("click", () => set(false));
+}
+
 /* ---------- Build the page ---------- */
 
 const pages = { home: homePage, work: workPage, project: projectPage, about: aboutPage };
@@ -479,6 +510,7 @@ if (PAGE === "project") window.scrollTo(0, 0);
 
 rotateRoles();
 rotatePhotos();
+setupHireMenu();
 setupFilters();
 setupReveal();
 setupSpotlight();
